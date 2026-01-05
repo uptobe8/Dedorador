@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Replicate from "replicate";
 
 const replicate = new Replicate({
-  auth: process.env.REPLICATE_API_KEY,
+  auth: process.env.REPLICATE_API_TOKEN,
 });
 
 export async function POST(req: NextRequest) {
@@ -17,23 +17,23 @@ export async function POST(req: NextRequest) {
     }
 
     const output = await replicate.run(
-      "jagilley/controlnet-hough:854e8727697a057c525cdb45ab037f64ecca770a1769cc52287c2e56472a247b",
+      "timbrooks/instruct-pix2pix:30c1d0b916a6f1e3ed1c0f54d354e78e3e0991f5b27b5318e86c1d2cdcd88c9e",
       {
         input: {
           image,
           prompt,
           num_outputs: 1,
           image_resolution: "512",
-          ddim_steps: 20,
+          num_inference_steps: 20,
         },
       }
     );
 
     return NextResponse.json({ output });
-  } catch (error) {
-    console.error("Error generando imagen:", error);
+  } catch (error: any) {
+    console.error("Error en API:", error);
     return NextResponse.json(
-      { error: "Error al generar la imagen" },
+      { error: error.message || "Error al generar imagen" },
       { status: 500 }
     );
   }
